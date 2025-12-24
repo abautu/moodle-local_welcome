@@ -20,8 +20,7 @@
  * it has a settings page that allow you to configure the messages
  * send.
  *
- * @package    local
- * @subpackage welcome
+ * @package    local_welcome
  * @copyright  2017 Bas Brands, basbrands.nl, bas@sonsbeekmedia.nl
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,7 +28,6 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) {
-
     $moderator = get_admin();
     $site = get_site();
 
@@ -48,7 +46,7 @@ if ($hassiteconfig) {
     $title = get_string('auth_plugins', 'local_welcome');
     $description = get_string('auth_plugins_desc', 'local_welcome');
     $auths = get_enabled_auth_plugins();
-    $authlist = array();
+    $authlist = [];
     foreach ($auths as $auth) {
         $authlist[$auth] = $auth;
     }
@@ -124,4 +122,3 @@ if ($hassiteconfig) {
     $setting = new admin_setting_configtext($name, $title, $description, $moderator->lastname);
     $settings->add($setting);
 }
-

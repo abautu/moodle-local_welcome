@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Utility class for message processing.
+ *
  * @package    local_welcome
  * @copyright  2017 Bas Brands
  * @author     Bas Brands, basbrands.nl
@@ -29,13 +31,30 @@ global $CFG;
 require_once($CFG->dirroot . '/user/profile/lib.php');
 require_once($CFG->dirroot . '/user/lib.php');
 
+/**
+ * Utility class for message processing.
+ */
 class message {
+    /**
+     * @var array Default site fields.
+     */
+    public array $defaultfields;
+    /**
+     * @var array Default welcome fields.
+     */
+    public array $welcomefields;
+    /**
+     * @var array Welcome message values.
+     */
+    public array $welcomevalues;
+    /**
+     * @var array Custom profile fields.
+     */
+    public array $customfields;
 
-    public $defaultfields;
-    public $welcomefields;
-    public $welcomevalues;
-    public $customfields;
-
+    /**
+     * Constructor.
+     */
     public function __construct() {
         $this->defaultfields = $this->get_default_fields();
         $this->welcomefields = $this->get_welcome_fields();
@@ -43,34 +62,57 @@ class message {
         $this->customfields = $this->get_custom_fields();
     }
 
-
+    /**
+     * Return default field names.
+     *
+     * @return array
+     */
     private function get_default_fields() {
-        $defaultfields = array('username', 'fullname', 'firstname', 'lastname', 'email',
+        $defaultfields = ['username', 'fullname', 'firstname', 'lastname', 'email',
             'address', 'phone1', 'phone2', 'icq', 'skype', 'yahoo', 'aim', 'msn', 'department',
             'institution', 'interests', 'idnumber', 'lang', 'timezone', 'description',
-            'city', 'url', 'country'
-        );
+            'city', 'url', 'country',
+        ];
 
         return $defaultfields;
     }
 
+    /**
+     * Return welcome field names.
+     *
+     * @return array
+     */
     private function get_welcome_fields() {
-        $welcomefields = array('sitelink', 'sitename', 'resetpasswordlink');
+        $welcomefields = ['sitelink', 'sitename', 'resetpasswordlink'];
 
         return $welcomefields;
     }
 
+    /**
+     * Return custom profile field names.
+     *
+     * @return array
+     *   An array of custom profile field shortnames.
+     */
     private function get_custom_fields() {
         $customfields = profile_get_custom_fields(true);
-        $returnfields = array();
+        $returnfields = [];
         foreach ($customfields as $field) {
             $returnfields[] = $field->shortname;
         }
         return $returnfields;
     }
 
+    /**
+     * Get user default profile field values.
+     *
+     * @param object $user
+     *   The user object.
+     * @return array
+     *   An associative array of default profile field values.
+     */
     public function get_user_default_values($user) {
-        $values = array();
+        $values = [];
         foreach ($this->defaultfields as $field) {
             if (isset($user->$field)) {
                 $values[$field] = $user->$field;
@@ -87,9 +129,17 @@ class message {
         return $values;
     }
 
+    /**
+     * Get user custom profile field values.
+     *
+     * @param object $user
+     *   The user object.
+     * @return array
+     *   An associative array of custom profile field values.
+     */
     public function get_user_custom_values($user) {
         $userinfo = profile_user_record($user->id);
-        $values = array();
+        $values = [];
         foreach ($this->customfields as $field) {
             $fieldname = $field;
             if (isset($userinfo->$fieldname)) {
@@ -101,36 +151,53 @@ class message {
         return $values;
     }
 
+    /**
+     * Get welcome message values.
+     *
+     * @return array
+     *   An associative array of welcome message values.
+     */
     public function get_welcome_values() {
         global $SITE;
 
-        $values = array();
+        $values = [];
         $sitelink = \html_writer::link(new \moodle_url('/'), $SITE->fullname);
         $sitename = $SITE->fullname;
         $resetpasswordlink = \html_writer::link(
-            new \moodle_url('/login/forgot_password.php'), get_string('resetpass', 'local_welcome'));
+            new \moodle_url('/login/forgot_password.php'),
+            get_string('resetpass', 'local_welcome')
+        );
         foreach ($this->welcomefields as $field) {
             $values[$field] = $$field;
         }
         return $values;
     }
 
+    /**
+     * Replace the tokens in a message.
+     *
+     * @param object $user
+     *   The user object.
+     * @param string $message
+     *   The message with tokens.
+     * @return string
+     *   The message with replaced tokens.
+     */
     public function replace_values($user, $message) {
         $cususervars = $this->get_user_custom_values($user);
         $defuservars = $this->get_user_default_values($user);
 
         foreach ($this->defaultfields as $field) {
-            $message = str_replace('[['.$field.']]', $defuservars[$field], $message);
+            $message = str_replace('[[' . $field . ']]', $defuservars[$field], $message);
         }
 
         foreach ($this->customfields as $field) {
-            $message = str_replace('[['.$field.']]', $cususervars[$field], $message);
+            $message = str_replace('[[' . $field . ']]', $cususervars[$field], $message);
         }
 
         foreach ($this->welcomefields as $field) {
-            $message = str_replace('[['.$field.']]', $this->welcomevalues[$field], $message);
+            $message = str_replace('[[' . $field . ']]', $this->welcomevalues[$field], $message);
         }
         return $message;
-
     }
 }

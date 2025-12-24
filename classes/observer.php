@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of the Local welcome plugin
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,19 +20,26 @@
  * it has a settings page that allow you to configure the messages
  * send.
  *
- * @package    local
- * @subpackage welcome
+ * @package    local_welcome
  * @copyright  2017 Bas Brands, basbrands.nl, bas@sonsbeekmedia.nl
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace local_welcome;
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Observer class for user_created events.
+ */
 class observer {
-
-    public static function send_welcome(\core\event\user_created $event) {
+    /**
+     * Send the welcome message.
+     *
+     * @param \core\event\user_created $event
+     *   The event object.
+     * @return void
+     *   No return value.
+     */
+    public static function send_welcome(\core\event\user_created $event): void {
         global $CFG, $SITE;
 
         $eventdata = $event->get_data();
@@ -47,7 +54,6 @@ class observer {
         }
 
         if (!empty($user->email)) {
-
             $config = get_config('local_welcome');
 
             $moderator = clone($sender);
@@ -55,10 +61,10 @@ class observer {
             if (!empty($config->auth_plugins)) {
                 $auths = explode(',', $config->auth_plugins);
                 if (!in_array($user->auth, $auths)) {
-                    return '';
+                    return;
                 }
             } else {
-                return '';
+                return;
             }
 
             $moderator->email = $config->moderator_email;
@@ -87,10 +93,8 @@ class observer {
             }
 
             if (!empty($messagemoderator) && !empty($sender->email) && $messagemoderatorenabled) {
-                email_to_user($moderator, $sender, $messagemoderatorsubject,
-                    html_to_text($messagemoderator), $messagemoderator);
+                email_to_user($moderator, $sender, $messagemoderatorsubject, html_to_text($messagemoderator), $messagemoderator);
             }
         }
     }
-
 }

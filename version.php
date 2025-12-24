@@ -20,16 +20,15 @@
  * it has a settings page that allow you to configure the messages
  * send.
  *
- * @package    local
- * @subpackage welcome
+ * @package    local_welcome
  * @copyright  2017 Bas Brands, basbrands.nl, bas@sonsbeekmedia.nl
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2021081600;
+$plugin->version  = 2025122400;
 $plugin->requires = 2013051400;
-$plugin->release = '2';
+$plugin->release = '2.2';
 $plugin->maturity = MATURITY_STABLE;
 $plugin->component = 'local_welcome';
