@@ -44,6 +44,7 @@ The values shown in this table are YOUR profile field values, they will be repla
 $string['configure'] = 'Configure this plugin';
 $string['auth_plugins'] = 'Auth plugins';
 $string['auth_plugins_desc'] = 'Choose the auth plugins for which a welcome message should be send';
+$string['auth_template_heading'] = 'Email template used for users with {$a} authentication';
 $string['message_user_enabled'] = 'Enable user messages';
 $string['message_user_enabled_desc'] = 'This tickbox enables the sending of welcome messages to new users<br><br>Visit <a href="{$a}">this page to see the list of available fields</a>';
 $string['message_user_subject'] = 'User subject';
