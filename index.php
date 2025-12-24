@@ -37,7 +37,7 @@ if (!is_siteadmin()) {
 $welcome = new \local_welcome\message();
 
 $PAGE->set_context($context);
-$PAGE->set_url('/local/welcome/index.php.php');
+$PAGE->set_url('/local/welcome/index.php');
 $PAGE->set_heading($SITE->fullname);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title(get_string('pluginname', 'local_welcome'));
